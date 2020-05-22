@@ -53,7 +53,7 @@ class module_controller extends ctrl_module
 
     static private function check_pChart($display)
     {
-        return (file_exists('etc/lib/pChart2/class/pData.class.php')) ? $display : 'pChart Library Not Found.';
+        return (file_exists('etc/lib/pChart2/pChart/pData.php')) ? $display : 'pChart Library Not Found.';
     }
 
     static function getUsage()
@@ -206,11 +206,7 @@ class module_controller extends ctrl_module
     {
 		global $controller;
         if ($maximum < 0) { //-1 = unlimited
-            	if (file_exists(ui_tpl_assetfolderpath::Template() . 'img/misc/unlimited.png')) {
-				$res = '<img src="' . ui_tpl_assetfolderpath::Template() . 'img/misc/unlimited.png" alt="' . ui_language::translate('Unlimited') . '"/>';
-		}else{
-			$res = '<img src="modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/unlimited.png" alt="' . ui_language::translate('Unlimited') . '"/>';
-		}
+            $res = '<img src="modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/unlimited.png" alt="' . ui_language::translate('Unlimited') . '"/>';
         } else {
             $free = max($maximum - $used, 0);
             $res = '<img src="etc/lib/pChart2/sentora/z3DPie.php?score=' . $free . '::' . $used

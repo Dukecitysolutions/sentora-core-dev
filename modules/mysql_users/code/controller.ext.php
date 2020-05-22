@@ -191,7 +191,6 @@ class module_controller extends ctrl_module
         global $zdbh;
         global $controller;
         $currentuser = ctrl_users::GetUserDetail($uid);
-        $username = $currentuser['username'] . '_' . $username;
         // Check for spaces and remove if found...
         $username = strtolower(str_replace(' ', '', $username));
         // If errors are found, then exit before creating user...
@@ -517,10 +516,10 @@ class module_controller extends ctrl_module
 
     static function IsValidUserName($username)
     {
-        if (!preg_match('/^[a-z\d_][a-z\d_-]{0,62}$/i', $username) || preg_match('/-$/', $username)) {
+        if (!preg_match('/^[a-z\d][a-z\d-]{0,62}$/i', $username) || preg_match('/-$/', $username)) {
             return false;
         } else {
-            if (strlen($username) < 32) {
+            if (strlen($username) < 17) {
                 // Enforce the MySQL username limit! (http://dev.mysql.com/doc/refman/4.1/en/user-names.html)
                 return true;
             }
@@ -648,22 +647,56 @@ class module_controller extends ctrl_module
         return self::ListUserDatabases($controller->GetControllerRequest('URL', 'other'));
     }
 
-    static function getisDeleteUser()
+    static function getisDeleteUser($uid = null)
     {
         global $controller;
+        global $zdbh;
+
         $urlvars = $controller->GetAllControllerRequests('URL');
-        if ((isset($urlvars['show'])) && ($urlvars['show'] == "Delete"))
-            return true;
-        return false;
+
+        // Verify if Current user can Edit MySQL Account.
+        // This shall avoid exposing mysql username based on ID lookups.
+        $currentuser = ctrl_users::GetUserDetail($uid);
+
+    	$sql = "SELECT * FROM x_mysql_users WHERE mu_acc_fk=:userid AND mu_id_pk=:editedUsrID AND mu_deleted_ts IS NULL";
+    	$numrows = $zdbh->prepare($sql);
+    	$numrows->bindParam(':userid', $currentuser['userid']);
+		$numrows->bindParam(':editedUsrID', $urlvars['other']);
+    	$numrows->execute();
+
+        if( $numrows->rowCount() == 0 ) {
+            return;
+        }
+
+        // Show User Info
+        return (isset($urlvars['show'])) && ($urlvars['show'] == "Delete");
+		
     }
 
-    static function getisEditUser()
+    static function getisEditUser($uid = null)
     {
+		
         global $controller;
-        $urlvars = $controller->GetAllControllerRequests('URL');
-        if ((isset($urlvars['show'])) && ($urlvars['show'] == "Edit"))
-            return true;
-        return false;
+        global $zdbh;
+
+        $urlvars     = $controller->GetAllControllerRequests('URL');
+
+        // Verify if Current user can Edit MySQL Account.
+        // This shall avoid exposing mysql username based on ID lookups.
+        $currentuser = ctrl_users::GetUserDetail($uid);
+
+    	$sql = "SELECT * FROM x_mysql_users WHERE mu_acc_fk=:userid AND mu_id_pk=:editedUsrID AND mu_deleted_ts IS NULL";
+    	$numrows = $zdbh->prepare($sql);
+    	$numrows->bindParam(':userid', $currentuser['userid']);
+		$numrows->bindParam(':editedUsrID', $urlvars['other']);
+    	$numrows->execute();
+
+        if( $numrows->rowCount() == 0 ) {
+            return;
+        }
+		
+        // Show User Info
+        return (isset($urlvars['show'])) && ($urlvars['show'] == "Edit");
     }
 
     static function getisCreateUser()
@@ -706,12 +739,7 @@ class module_controller extends ctrl_module
 
     static function getMysqlUsagepChart()
     {
-		global $controller;
-		if (file_exists(ui_tpl_assetfolderpath::Template() . 'img/misc/unlimited.png')) {
-			return '<img src="' . ui_tpl_assetfolderpath::Template() . 'img/misc/unlimited.png" alt="' . ui_language::translate('Unlimited') . '"/>';
-		} else {
-			return '<img src="modules/' . $controller->GetControllerRequest('URL', 'module') . '/assets/unlimited.png" alt="' . ui_language::translate('Unlimited') . '"/>';
-		}
+        return '<img src="' . ui_tpl_assetfolderpath::Template() . 'img/misc/unlimited.png" alt="' . ui_language::translate('Unlimited') . '"/>';
     }
 
     static function getResult()
