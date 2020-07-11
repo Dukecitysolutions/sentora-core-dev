@@ -717,7 +717,7 @@ class module_controller extends ctrl_module
                         if (isset($ttl['new_' . $id]) && !fs_director::CheckForEmptyValue($ttl['new_' . $id])) {
                             $ttl_new = self::CleanRecord($ttl['new_' . $id], $type['new_' . $id]);
                         } else {
-                            $ttl_new = "NULL";
+                            $ttl_new = "0";
                         }
                         if (isset($target['new_' . $id]) && !fs_director::CheckForEmptyValue($target['new_' . $id])) {
                             //If Custom IP addresses are not allowed.
@@ -737,17 +737,17 @@ class module_controller extends ctrl_module
                         if (isset($priority['new_' . $id]) && !fs_director::CheckForEmptyValue($priority['new_' . $id])) {
                             $priority_new = self::CleanRecord($priority['new_' . $id], $type['new_' . $id]);
                         } else {
-                            $priority_new = "NULL";
+                            $priority_new = "0";
                         }
                         if (isset($weight['new_' . $id]) && !fs_director::CheckForEmptyValue($weight['new_' . $id])) {
                             $weight_new = self::CleanRecord($weight['new_' . $id], $type['new_' . $id]);
                         } else {
-                            $weight_new = "NULL";
+                            $weight_new = "0";
                         }
                         if (isset($port['new_' . $id]) && !fs_director::CheckForEmptyValue($port['new_' . $id])) {
                             $port_new = self::CleanRecord($port['new_' . $id], $type['new_' . $id]);
                         } else {
-                            $port_new = "NULL";
+                            $port_new = "0";
                         }
                         $sql = $zdbh->prepare("INSERT INTO x_dns (dn_acc_fk,
                            dn_name_vc,
