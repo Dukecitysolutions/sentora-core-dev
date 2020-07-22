@@ -58,8 +58,7 @@ class module_controller extends ctrl_module
             while ($rowclients = $sql->fetch()) {
                 $res[] = array('id' => $rowclients['ft_id_pk'],
                     'directory' => runtime_xss::xssClean($rowclients['ft_directory_vc']),
-                    'access' => runtime_xss::xssClean($rowclients['ft_access_vc']),
-                    'password' => runtime_xss::xssClean($rowclients['ft_password_vc']),
+                    'access' => runtime_xss::xssClean($rowclients['ft_access_vc']),				
                     'username' => runtime_xss::xssClean($rowclients['ft_user_vc']));
             }
             return $res;
@@ -85,7 +84,6 @@ class module_controller extends ctrl_module
                 $res[] = array('id' => $rowclients['ft_id_pk'],
                     'directory' => runtime_xss::xssClean($rowclients['ft_directory_vc']),
                     'access' => runtime_xss::xssClean($rowclients['ft_access_vc']),
-                    'password' => runtime_xss::xssClean($rowclients['ft_password_vc']),
                     'username' => runtime_xss::xssClean($rowclients['ft_user_vc']));
             }
             return $res;
