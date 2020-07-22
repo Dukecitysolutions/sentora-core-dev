@@ -151,7 +151,7 @@ class module_controller extends ctrl_module
      * @param int $uid
      * @return boolean
      */
-    static function getDomainList($uid)
+    static function getDomainList($uid = null)
     {
         global $zdbh;
         $currentuser = ctrl_users::GetUserDetail($uid);
