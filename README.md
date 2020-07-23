@@ -1,6 +1,6 @@
 # Sentora
 
-* Version: TBA 
+* Version: TBA v.1.X.X Pre-alpha
 * [Website](http://sentora.org/)
 * [Forums](http://forums.sentora.org/) for comments, discussion and community support.
 * [Bug Tracker](https://github.com/sentora/sentora-core/issues) for any bugs or security related issues.
