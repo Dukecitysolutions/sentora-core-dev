@@ -236,8 +236,8 @@ $myPicture->setShadow(TRUE,["X"=>3,"Y"=>3,"Color"=>ColorBlack($Alpha=10)]);
 $PieChart->draw3DPie(120,90,["Radius"=>100,"DataGapAngle"=>12,"DataGapRadius"=>10,"Border"=>TRUE]);
 
 /* Write the legend box */ 
-$myPicture->setFontProperties(["FontName"=>"pChart/fonts/PressStart2P-Regular.ttf","FontSize"=>6,"Color"=>ColorBlack()]);
-//$PieChart->drawPieLegend(140,160,["Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL]);
+//$myPicture->setFontProperties(["FontName"=>"pChart/fonts/PressStart2P-Regular.ttf","FontSize"=>6,"Color"=>ColorBlack()]);
+$PieChart->drawPieLegend(0,150,["Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_VERTICAL]);
 $PieChart->drawPieLegend($LegendSize[0], $LegendSize[1], array("Style" => LEGEND_NOBORDER, "Mode" => LEGEND_VERTICAL));
 
 /* Render the picture (choose the best way) */
