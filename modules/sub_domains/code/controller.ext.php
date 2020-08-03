@@ -392,12 +392,30 @@ class module_controller extends ctrl_module
         }
         return false;
     }
-
+	
     static function getisDeleteDomain()
     {
         global $controller;
+        global $zdbh;
+
         $urlvars = $controller->GetAllControllerRequests('URL');
-        return (isset($urlvars['show'])) && ($urlvars['show'] == 'Delete');
+
+        // Verify if Current user can Delete Sub_Domains.
+        // This shall avoid exposing Sub_Domains based on ID lookups.
+        $currentuser = ctrl_users::GetUserDetail($uid);
+
+    	$sql = "SELECT * FROM x_vhosts WHERE vh_acc_fk=:userid AND vh_id_pk=:editedUsrID AND vh_deleted_ts IS NULL";
+    	$numrows = $zdbh->prepare($sql);
+    	$numrows->bindParam(':userid', $currentuser['userid']);
+		$numrows->bindParam(':editedUsrID', $urlvars['other']);
+    	$numrows->execute();
+
+        if( $numrows->rowCount() == 0 ) {
+            return;
+        }
+
+        // Show User Info
+        return (isset($urlvars['show'])) && ($urlvars['show'] == "Delete");
     }
 
     static function getCurrentID()

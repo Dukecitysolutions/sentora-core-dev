@@ -515,19 +515,51 @@ class module_controller extends ctrl_module
     static function getisEditDistList()
     {
         global $controller;
-        $urlvars = $controller->GetAllControllerRequests('URL');
-        if ((isset($urlvars['show'])) && ($urlvars['show'] == "Edit"))
-            return true;
-        return false;
+        global $zdbh;
+
+        $urlvars     = $controller->GetAllControllerRequests('URL');
+
+        // Verify if Current user can Edit Mail distlists.
+        // This shall avoid exposing mail distlists based on ID lookups.
+        $currentuser = ctrl_users::GetUserDetail($uid);
+
+    	$sql = "SELECT * FROM x_distlists WHERE dl_acc_fk=:userid AND dl_id_pk=:editedUsrID AND dl_deleted_ts IS NULL";
+    	$numrows = $zdbh->prepare($sql);
+    	$numrows->bindParam(':userid', $currentuser['userid']);
+		$numrows->bindParam(':editedUsrID', $urlvars['other']);
+    	$numrows->execute();
+
+        if( $numrows->rowCount() == 0 ) {
+            return;
+        }
+		
+        // Show User Info
+        return (isset($urlvars['show'])) && ($urlvars['show'] == "Edit");
     }
 
     static function getisDeleteDistList()
     {
         global $controller;
+        global $zdbh;
+
         $urlvars = $controller->GetAllControllerRequests('URL');
-        if ((isset($urlvars['show'])) && ($urlvars['show'] == "Delete"))
-            return true;
-        return false;
+
+        // Verify if Current user can Delete Mail distlists.
+        // This shall avoid exposing mail distlists based on ID lookups.
+        $currentuser = ctrl_users::GetUserDetail($uid);
+
+    	$sql = "SELECT * FROM x_distlists WHERE dl_acc_fk=:userid AND dl_id_pk=:editedUsrID AND dl_deleted_ts IS NULL";
+    	$numrows = $zdbh->prepare($sql);
+    	$numrows->bindParam(':userid', $currentuser['userid']);
+		$numrows->bindParam(':editedUsrID', $urlvars['other']);
+    	$numrows->execute();
+
+        if( $numrows->rowCount() == 0 ) {
+            return;
+        }
+
+        // Show User Info
+        return (isset($urlvars['show'])) && ($urlvars['show'] == "Delete");
     }
 
     static function getisCreateDistList()

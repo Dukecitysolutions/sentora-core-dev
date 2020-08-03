@@ -412,7 +412,25 @@ class module_controller extends ctrl_module
     static function getisDeleteDomain()
     {
         global $controller;
+        global $zdbh;
+
         $urlvars = $controller->GetAllControllerRequests('URL');
+
+        // Verify if Current user can Delete user domains.
+        // This shall avoid exposing domain based on ID lookups.
+        $currentuser = ctrl_users::GetUserDetail($uid);
+
+    	$sql = "SELECT * FROM x_vhosts WHERE vh_acc_fk=:userid AND vh_id_pk=:editedUsrID AND vh_deleted_ts IS NULL";
+    	$numrows = $zdbh->prepare($sql);
+    	$numrows->bindParam(':userid', $currentuser['userid']);
+		$numrows->bindParam(':editedUsrID', $urlvars['other']);
+    	$numrows->execute();
+
+        if( $numrows->rowCount() == 0 ) {
+            return;
+        }
+
+        // Show User Info
         return (isset($urlvars['show'])) && ($urlvars['show'] == "Delete");
     }
 

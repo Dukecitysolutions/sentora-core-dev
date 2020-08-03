@@ -392,7 +392,7 @@ class module_controller extends ctrl_module
 
         $urlvars = $controller->GetAllControllerRequests('URL');
 
-        // Verify if Current user can Edit Mail Account.
+        // Verify if Current user can Delete Mail Account.
         // This shall avoid exposing mail username based on ID lookups.
         $currentuser = ctrl_users::GetUserDetail($uid);
 

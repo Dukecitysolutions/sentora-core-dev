@@ -247,7 +247,7 @@ class module_controller extends ctrl_module
 
         $urlvars = $controller->GetAllControllerRequests('URL');
 
-        // Verify if Current user can Edit Database Account.
+        // Verify if Current user can Delete Database Account.
         // This shall avoid exposing database based on ID lookups.
         $currentuser = ctrl_users::GetUserDetail($uid);
 

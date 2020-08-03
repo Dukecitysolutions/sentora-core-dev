@@ -399,7 +399,7 @@ class module_controller extends ctrl_module
 
         $urlvars = $controller->GetAllControllerRequests('URL');
 
-        // Verify if Current user can Edit FTP Account.
+        // Verify if Current user can Delete FTP Account.
         // This shall avoid exposing ftp username based on ID lookups.
         $currentuser = ctrl_users::GetUserDetail($uid);
 
