@@ -1,0 +1,80 @@
+alaises		-	Module not working - CHECK
+
+apache_admin	-	N/A Admin module - need to check futher
+
+backup_admin		N/A Admin module - need to check futher
+
+backupmgr	-	NEED TO CHECK!!!!!!
+
+client_notices	-	NEED TO CHECK!!!!!!
+
+cron		-	NEED TO CHECK!!!!!!
+
+distlists	-	SECURE/FIXED - Delete, edit hack with any user thru URL
+
+dns_admin	-	N/A Admin module - need to check futher
+
+dns_manager	-	CHECK
+
+domains		-	SECURE/FIXED - Delete, edit hack with any user thru URL
+
+faqs		-	N/A need to check
+
+forwarders	-	SECURE/FIXED - Delete, edit hack with any user thru URL
+
+ftp_admin	-	N/A Admin module - need to check futher
+
+ftp_management	-	SECURE/FIXED - Delete, edit hack with any user thru URL
+
+mail_admin	-	N/A Admin module - need to check futher
+
+mailboxes	-	SECURE/FIXED - Delete, edit hack with any user thru URL
+
+manage_clients	-	N/A - need to check
+
+manage_groups	-	N/A - need to check
+
+moduleadmin	-	N/A Admin module - need to check futher
+
+my_account	-	NEED TO CHECK!!!!!!
+
+mysql_databases	-	SECURE/FIXED - Delete, edit hack with any user thru URL
+
+mysql_users	-	SECURE/FIXED - Delete, edit, see passwords hack with any user thru URL
+
+news		-	N/A need to check
+
+packages	-	N/A need to check
+
+parked_domains	-	SECURE/FIXED - Delete, edit hack with any user thru URL
+
+password_assistant-	N/A - need to check
+
+phpinfo		-	N/A - need to check
+
+phpmyadmin	-	N/A - need to check
+
+phpsysinfo	-	N/A - need to check
+
+protected_directories-	NEED TO CHECK!!!!!!
+
+sentoraconfig	-	N/A Admin module - need to check futher
+
+services	-	NEED TO CHECK!!!!!!
+
+shadowing	-	NEED TO CHECK!!!!!!
+
+sub_domains	-	SECURE/FIXED - Delete, edit hack with any user thur URL
+
+theme_manager	-	NEED TO CHECK!!!!!!
+
+updates		-	N/A - need to check
+
+useage_viewer	-	NEED TO CHECK!!!!!!
+
+webalizer_stats	-	NEED TO CHECK!!!!!!
+
+webmail		-	N/A - need to check
+
+zpx_core_module	-	N/A Core module - need to check futher
+
