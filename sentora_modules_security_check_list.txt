@@ -18,7 +18,7 @@ dns_manager	-	CHECK
 
 domains		-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
-faqs		-	N/A need to check
+faqs		-	SECURE
 
 forwarders	-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
@@ -30,9 +30,9 @@ mail_admin	-	N/A Admin module - need to check futher
 
 mailboxes	-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
-manage_clients	-	N/A - need to check
+manage_clients	-	*NOT SECURE*
 
-manage_groups	-	N/A - need to check
+manage_groups	-	*NOT SECURE*
 
 moduleadmin	-	N/A Admin module - need to check futher
 
@@ -44,23 +44,23 @@ mysql_users	-	SECURE/FIXED - Delete, edit, see passwords hack with any user thru
 
 news		-	N/A need to check
 
-packages	-	N/A need to check
+packages	-	*NOT SECURE*
 
 parked_domains	-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
 password_assistant-	N/A - need to check
 
-phpinfo		-	N/A - need to check
+phpinfo		-	SECURE
 
-phpmyadmin	-	N/A - need to check
+phpmyadmin	-	SECURE
 
-phpsysinfo	-	N/A - need to check
+phpsysinfo	-	SECURE
 
 protected_directories-	NEED TO CHECK!!!!!!
 
 sentoraconfig	-	N/A Admin module - need to check futher
 
-services	-	NEED TO CHECK!!!!!!
+services	-	SECURE
 
 shadowing	-	NEED TO CHECK!!!!!!
 
@@ -68,13 +68,13 @@ sub_domains	-	SECURE/FIXED - Delete, edit hack with any user thur URL
 
 theme_manager	-	NEED TO CHECK!!!!!!
 
-updates		-	N/A - need to check
+updates		-	SECURE
 
 useage_viewer	-	NEED TO CHECK!!!!!!
 
 webalizer_stats	-	NEED TO CHECK!!!!!!
 
-webmail		-	N/A - need to check
+webmail		-	SECURE
 
 zpx_core_module	-	N/A Core module - need to check futher
 
