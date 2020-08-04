@@ -134,7 +134,7 @@ class module_controller extends ctrl_module
         $binds = array(':userid' => $currentuser['userid']);
         $prepared = $zdbh->bindQuery($sql, $binds);
         
-        //$rows = $prepared->fetchAll(PDO::FETCH_ASSOC);
+        $rows = $prepared->fetchAll(PDO::FETCH_ASSOC);
         $return = array();
         
         if (count($rows) > 0) {
@@ -380,10 +380,26 @@ class module_controller extends ctrl_module
     static function getisDeleteAlias()
     {
         global $controller;
+        global $zdbh;
+
         $urlvars = $controller->GetAllControllerRequests('URL');
-        if ((isset($urlvars['show'])) && ($urlvars['show'] == "Delete"))
-            return true;
-        return false;
+
+        // Verify if Current user can Delete Mail Alias Account.
+        // This shall avoid exposing Mail Alias based on ID lookups.
+        $currentuser = ctrl_users::GetUserDetail($uid);
+
+        $sql = " SELECT * FROM x_aliases WHERE al_acc_fk=:userid AND al_id_pk=:editedUsrID AND al_deleted_ts IS NULL";
+        $numrows = $zdbh->prepare($sql);
+        $numrows->bindParam(':userid', $currentuser['userid']);
+        $numrows->bindParam(':editedUsrID', $urlvars['other']);
+        $numrows->execute();
+
+        if( $numrows->rowCount() == 0 ) {
+            return;
+        }
+
+        // Show User Info
+        return (isset($urlvars['show'])) && ($urlvars['show'] == "Delete");
     }
 
     static function getEditCurrentAliasID()
