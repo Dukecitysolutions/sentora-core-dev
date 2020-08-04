@@ -354,7 +354,7 @@ class module_controller extends ctrl_module
         return false;
     }
 
-    static function getisDeleteDomain()
+    static function getisDeleteDomain($uid = null)
     {
         global $controller;
         global $zdbh;

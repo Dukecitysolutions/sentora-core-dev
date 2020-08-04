@@ -240,7 +240,7 @@ class module_controller extends ctrl_module
         return self::ListDatabases($currentuser['userid']);
     }
 
-    static function getisDeleteDatabase()
+    static function getisDeleteDatabase($uid = null)
     {
         global $controller;
         global $zdbh;

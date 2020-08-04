@@ -512,7 +512,7 @@ class module_controller extends ctrl_module
         }
     }
 
-    static function getisEditDistList()
+    static function getisEditDistList($uid = null)
     {
         global $controller;
         global $zdbh;
@@ -537,7 +537,7 @@ class module_controller extends ctrl_module
         return (isset($urlvars['show'])) && ($urlvars['show'] == "Edit");
     }
 
-    static function getisDeleteDistList()
+    static function getisDeleteDistList($uid = null)
     {
         global $controller;
         global $zdbh;

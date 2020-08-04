@@ -377,7 +377,7 @@ class module_controller extends ctrl_module
         return false;
     }
 
-    static function getisDeleteAlias()
+    static function getisDeleteAlias($uid = null)
     {
         global $controller;
         global $zdbh;

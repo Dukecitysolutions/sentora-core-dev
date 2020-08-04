@@ -288,7 +288,7 @@ class module_controller extends ctrl_module
         return !isset($urlvars['show']);
     }
 
-    static function getisDeleteForwarder()
+    static function getisDeleteForwarder($uid = null)
     {
         global $controller;
         global $zdbh;
