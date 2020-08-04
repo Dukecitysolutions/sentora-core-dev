@@ -1,4 +1,4 @@
-alaises		-	Module not working - CHECK
+alaises		-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
 apache_admin	-	N/A Admin module - need to check futher
 
