@@ -30,9 +30,9 @@ mail_admin	-	N/A Admin module - need to check futher
 
 mailboxes	-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
-manage_clients	-	*NOT SECURE*
+manage_clients	-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
-manage_groups	-	*NOT SECURE*
+manage_groups	-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
 moduleadmin	-	N/A Admin module - need to check futher
 
