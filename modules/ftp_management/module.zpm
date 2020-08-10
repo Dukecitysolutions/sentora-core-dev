@@ -241,7 +241,7 @@
         $('.link-password').click(function(e){
             linkId = $(this).attr('id');
             if (linkId == 'generate'){
-                password = $.password(9,false);
+                password = $.password(16,false);
                 $('#input-password').val(password);
             }
             e.preventDefault();
