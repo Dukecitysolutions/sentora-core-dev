@@ -198,7 +198,7 @@ class module_controller extends ctrl_module
             return false;
         }
         runtime_hook::Execute('OnBeforeCreateDatabaseUser');
-        $password = fs_director::GenerateRandomPassword(9, 4);
+        $password = fs_director::GenerateRandomPassword(16, 4);
         // Create user in MySQL
         $sql = $zdbh->prepare("CREATE USER :username@:access;");
         $sql->bindParam(':username', $username);
