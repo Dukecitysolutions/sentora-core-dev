@@ -62,7 +62,7 @@
             <table class="table table-striped">
                 <tr>
                     <th nowrap="nowrap"><: Database :>:</th>
-                    <td width="150px">
+                    <td width="250px">
                         <select name="inDatabase" id="inDatabase">
                             <option value="" selected="selected">-- Select a database --</option>
                             <% if DatabaseList %>
@@ -88,7 +88,7 @@
             <table class="zform">
                 <tr>
                     <th nowrap="nowrap"><: Password :>:</th>
-                    <td width="150px">
+                    <td width="250px">
                         <input type="text" name="inResetPW" id="input-password" value="">
                     </td>
                     <td>
