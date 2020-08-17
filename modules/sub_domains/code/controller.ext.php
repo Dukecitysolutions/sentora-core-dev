@@ -404,10 +404,10 @@ class module_controller extends ctrl_module
         // This shall avoid exposing Sub_Domains based on ID lookups.
         $currentuser = ctrl_users::GetUserDetail($uid);
 
-    	$sql = "SELECT * FROM x_vhosts WHERE vh_acc_fk=:userid AND vh_id_pk=:editedUsrID AND vh_deleted_ts IS NULL";
+    	$sql = "SELECT * FROM x_vhosts WHERE vh_acc_fk=:userid AND vh_name_vc=:editedDomainID AND vh_deleted_ts IS NULL";
     	$numrows = $zdbh->prepare($sql);
     	$numrows->bindParam(':userid', $currentuser['userid']);
-		$numrows->bindParam(':editedUsrID', $urlvars['other']);
+		$numrows->bindParam(':editedDomainID', $urlvars['domain']);
     	$numrows->execute();
 
         if( $numrows->rowCount() == 0 ) {
