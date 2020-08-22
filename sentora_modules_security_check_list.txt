@@ -1,18 +1,20 @@
+# Modules that have been checked for URL hacks.
+
 alaises		-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
-apache_admin	-	N/A Admin module - need to check futher
+apache_admin	-	- N/A Admin module - need to check futher
 
-backup_admin		N/A Admin module - need to check futher
+backup_admin		- N/A Admin module - need to check futher
 
-backupmgr	-	NEED TO CHECK!!!!!!
+backupmgr	-	NOT SECURE!!! FIXING!.!.!.!
 
-client_notices	-	NEED TO CHECK!!!!!!
+client_notices	-	SECURE
 
 cron		-	NEED TO CHECK!!!!!!
 
 distlists	-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
-dns_admin	-	N/A Admin module - need to check futher
+dns_admin	-	- N/A Admin module - need to check futher
 
 dns_manager	-	CHECK
 
@@ -22,11 +24,11 @@ faqs		-	SECURE
 
 forwarders	-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
-ftp_admin	-	N/A Admin module - need to check futher
+ftp_admin	-	- N/A Admin module - need to check futher
 
 ftp_management	-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
-mail_admin	-	N/A Admin module - need to check futher
+mail_admin	-	- N/A Admin module - need to check futher
 
 mailboxes	-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
@@ -34,21 +36,21 @@ manage_clients	-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
 manage_groups	-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
-moduleadmin	-	N/A Admin module - need to check futher
+moduleadmin	-	- N/A Admin module - need to check futher
 
-my_account	-	NEED TO CHECK!!!!!!
+my_account	-	SECURE
 
 mysql_databases	-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
 mysql_users	-	SECURE/FIXED - Delete, edit, see passwords hack with any user thru URL
 
-news		-	N/A need to check
+news		-	SECURE
 
 packages	-	*NOT SECURE*
 
 parked_domains	-	SECURE/FIXED - Delete, edit hack with any user thru URL
 
-password_assistant-	N/A - need to check
+password_assistant-	- N/A - need to check
 
 phpinfo		-	SECURE
 
@@ -56,9 +58,9 @@ phpmyadmin	-	SECURE
 
 phpsysinfo	-	SECURE
 
-protected_directories-	NEED TO CHECK!!!!!!
+protected_directories-	SEEMS SECURE! NEEDS MORE TESTING!!!!!!
 
-sentoraconfig	-	N/A Admin module - need to check futher
+sentoraconfig	-	- N/A Admin module - need to check futher
 
 services	-	SECURE
 
@@ -76,5 +78,5 @@ webalizer_stats	-	NEED TO CHECK!!!!!!
 
 webmail		-	SECURE
 
-zpx_core_module	-	N/A Core module - need to check futher
+zpx_core_module	-	- N/A Core module - need to check futher
 
