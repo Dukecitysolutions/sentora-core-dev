@@ -17,14 +17,14 @@ if (ui_module::CheckModuleEnabled('Apache Config')) {
         echo "Begin writing Apache Config to: " . ctrl_options::GetSystemOption('apache_vhost') . fs_filehandler::NewLine();
         WriteVhostConfigFile();
 		
-		// If Apache vhost file passes configuration test, run Apache vhost file Backup
-		//if ( ##### == true ) { // NEEDS WORK
+		// If Apache vhost file passes configuration test, run Apache vhost file Backup. Helping To prevent backing up a currupt vhost.conf
+		if ( ctrl_options::GetSystemOption('apache_changed') != strtolower("true") ) {
 			
 			if (ctrl_options::GetSystemOption('apache_backup') == strtolower("true")) {
 				echo "Backing up Apache Config to: " . ctrl_options::GetSystemOption('apache_budir') . fs_filehandler::NewLine();
 				BackupVhostConfigFile();
 			}
-		//}
+		}
 
     } else {
         echo "Apache Config has NOT changed...nothing to do." . fs_filehandler::NewLine();
@@ -613,16 +613,13 @@ function WriteVhostConfigFile()
 	// Check Apache vhosts file for errors
 	echo "Checking Apache vhost config for errors..." . fs_filehandler::NewLine();
 	if (CheckApacheVhostConfig() == 0 ) {
-				
-		// Restart Apache service
-		RestartHttpdServices();
 		
 		// Delete vhost backup file
 		unlink($BackupFileName);
-		
-		// Return true so backup can run
-		return true;
-		
+				
+		// Restart Apache service
+		RestartHttpdServices();
+				
 	} else {
 		
 		echo "   Restoring orginal vhost file. Check in Sentora Panel Apache vhost config settings or httpd-vhosts.conf file for errors and retry." . fs_filehandler::NewLine();
@@ -631,9 +628,6 @@ function WriteVhostConfigFile()
 		copy($BackupFileName, $vhconfigfile);
 		unlink($BackupFileName);
 			
-		// Return false so backup wont run.
-		return false;
-		
 	}
 	
 }
@@ -681,7 +675,6 @@ function CheckApacheVhostConfig() {
 	
 	// Check Apache vhost.conf for errors
 	if (sys_versions::ShowOSPlatformVersion() == "Windows") {
-		
 		system("httpd -t " , $ConfigReturnValue); // NEEDS MORE TESTING
 		
 	} else { // Linux systems
