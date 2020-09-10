@@ -1,3 +1,68 @@
+<style>
+
+
+/* Style all input fields */
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 6px;
+  margin-bottom: 16px;
+}
+
+/* Style the submit button */
+input[type=submit] {
+  background-color: #4CAF50;
+  color: white;
+}
+
+/* Style the container for inputs */
+.check_container {
+  background-color: #f1f1f1;
+  padding: 0px;
+}
+
+/* The message box is shown when the user clicks on the password field */
+#message {
+  display:none;
+  background: #f1f1f1;
+  color: #000;
+  position: relative;
+  padding: 20px;
+  margin-top: 5px;
+}
+
+#message p {
+  padding: 0px 35px;
+  font-size: 14px;
+}
+
+/* Add a green text color and a checkmark when the requirements are right */
+.valid {
+  color: green;
+}
+
+.valid:before {
+  position: relative;
+  left: -35px;
+  content: "\2714";
+}
+
+/* Add a red text color and an "x" icon when the requirements are wrong */
+.invalid {
+  color: red;
+}
+
+.invalid:before {
+  position: relative;
+  left: -35px;
+  content: "\2718";
+}
+
+</style>
+
 <div class="zmodule_content panel" id="zmodule_header_<@ ModuleName @>">
     <div class="panel-heading">
         <img src="<@ ModuleIcon @>" width="35" height="35" border="0" alt="<@ ModuleName @>">
@@ -89,20 +154,33 @@
                 <tr>
                     <th nowrap="nowrap"><: Password :>:</th>
                     <td width="250px">
-                        <input type="text" name="inResetPW" id="input-password" value="">
+                        <input class="inPassword" type="text" name="inResetPW" id="inPassword" value="" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required />
                     </td>
+					<td><input id="showPassword" type="checkbox" onclick="passwordShowHide()" >Show Password</td>
+					<td style="width:20px"></td>
                     <td>
                         <input type="hidden" name="inUser" value="<@ EditCurrentUserID @>">
-                        <button class="button-loader btn btn-primary" type="submit" ><: Save Password :></button>
+                        <button class="button-nonloader btn btn-primary" type="submit" ><: Save Password :></button>
                         <button class="button-loader btn btn-default" type="button" onclick="window.location.href='./?module=mysql_users';return false;"><: Cancel :></button>
                     </td>
                 </tr>
                 <tr>
                     <th></th>
-                    <td><a href="#" class="link-password" id="generate"><: Generate Password :></a></td>
+                    <td><a href="#" class="link-password" id="generate" onclick="passwordShow(), check()" ><: Generate Password :></a></td>
                     <td></td>
                 </tr>
             </table>
+			
+			<div class="check_container">
+				<div id="message">
+					<h4>Password must contain the following:</h4>
+					<p id="letter" class="invalid">A <b>lowercase</b> letter</p>
+					<p id="capital" class="invalid">A <b>capital (uppercase)</b> letter</p>
+					<p id="number" class="invalid">A <b>number</b></p>
+					<p id="length" class="invalid">Minimum <b>8 characters</b></p>
+				</div>
+			</div>
+			
             <@ CSFR_Tag @>
         </form>
 
@@ -119,6 +197,7 @@
                     <th><: Access :></th>
                     <th><: Databases :></th>
                     <th><: Password :></th>
+					<th id="ColPass" style="visibility:visiable" ><button class="button btn btn-default" id="btn_sh">Show Passwords</button></th>
                     <th></th>
                 </tr>
                 <% loop UserList %>
@@ -126,7 +205,7 @@
                     <td><& username &></td>
                     <td><& accesshtml &></td>
                     <td><& totaldb &></td>
-                    <td><& dbpassword &></td>
+                    <td><span class="passRow" style="visibility: collapse"><& dbpassword &></td>
                     <td>
                         <button class="button-loader btn btn-default" type="submit" name="inEdit_<& userid &>" id="inEdit_<& userid &>" value="<& userid &>"><: Edit :></button>
                         <button class="button-loader delete btn btn-danger" type="submit" name="inDelete_<& userid &>" id="inDelete_<& userid &>" value="<& userid &>"><: Delete :></button>
@@ -243,9 +322,172 @@
             linkId = $(this).attr('id');
             if (linkId == 'generate'){
                 password = $.password(16,false);
-                $('#input-password').val(password);
+                $('.inPassword').val(password);
             }
             e.preventDefault();
         });
     });
+	
+	
+    $(document).ready(function() {
+		var ShowPass = false;
+        $('.link-password').click(function(e){
+            linkId = $(this).attr('id');
+            if (linkId == 'generate'){
+                password = $.password(16,false);
+                $('.inPassword').val(password);
+            }
+            e.preventDefault();
+        });
+		$('#btn_sh').click(function(e){
+		  if (!ShowPass)
+		  { 
+			  $('.passRow').css({'visibility': 'visible'});
+			  $('#btn_sh').innerHTML = 'Hide passwords';
+			  ShowPass = true;
+		  }
+		  else 
+		  {
+			  $('.passRow').css({'visibility': 'collapse'});
+			  $('#btn_sh').innerHTML = 'Show passwords';
+			  ShowPass = false;
+		  }
+		  e.preventDefault();
+		});
+		
+	  
+    });
+
+</script>
+
+<script type="text/JavaScript">
+	
+	var myInput = document.getElementById("inPassword");
+	var letter = document.getElementById("letter");
+	var capital = document.getElementById("capital");
+	var number = document.getElementById("number");
+	var length = document.getElementById("length");
+	
+	// When the user clicks on the password field, show the message box
+	myInput.onfocus = function() {
+	  	document.getElementById("message").style.display = "block";
+	}
+	
+	// When the user clicks outside of the password field, hide the message box
+	myInput.onblur = function() {
+	  	document.getElementById("message").style.display = "none";
+	}
+	
+	// When the user starts to type something inside the password field
+	myInput.onclick = function() {
+		  // Validate lowercase letters
+		  var lowerCaseLetters = /[a-z]/g;
+		  if(myInput.value.match(lowerCaseLetters)) {
+			letter.classList.remove("invalid");
+			letter.classList.add("valid");
+		  } else {
+			letter.classList.remove("valid");
+			letter.classList.add("invalid");
+	}
+	
+	  // Validate capital letters
+	  var upperCaseLetters = /[A-Z]/g;
+	  if(myInput.value.match(upperCaseLetters)) {
+			capital.classList.remove("invalid");
+			capital.classList.add("valid");
+	  } else {
+			capital.classList.remove("valid");
+			capital.classList.add("invalid");
+	  }
+	
+	  // Validate numbers
+	  var numbers = /[0-9]/g;
+	  if(myInput.value.match(numbers)) {
+			number.classList.remove("invalid");
+			number.classList.add("valid");
+	  } else {
+			number.classList.remove("valid");
+			number.classList.add("invalid");
+	  }
+	
+	  // Validate length
+	  if(myInput.value.length >= 8) {
+			length.classList.remove("invalid");
+			length.classList.add("valid");
+	  } else {
+			length.classList.remove("valid");
+			length.classList.add("invalid");
+	  }
+	}
+	
+	
+	// When the user clicks inside the password field
+	myInput.onkeyup = function() {
+		  // Validate lowercase letters
+		  var lowerCaseLetters = /[a-z]/g;
+		  if(myInput.value.match(lowerCaseLetters)) {
+			letter.classList.remove("invalid");
+			letter.classList.add("valid");
+		  } else {
+			letter.classList.remove("valid");
+			letter.classList.add("invalid");
+	}
+	
+	  // Validate capital letters
+	  var upperCaseLetters = /[A-Z]/g;
+	  if(myInput.value.match(upperCaseLetters)) {
+			capital.classList.remove("invalid");
+			capital.classList.add("valid");
+	  } else {
+			capital.classList.remove("valid");
+			capital.classList.add("invalid");
+	  }
+	
+	  // Validate numbers
+	  var numbers = /[0-9]/g;
+	  if(myInput.value.match(numbers)) {
+			number.classList.remove("invalid");
+			number.classList.add("valid");
+	  } else {
+			number.classList.remove("valid");
+			number.classList.add("invalid");
+	  }
+	
+	  // Validate length
+	  if(myInput.value.length >= 8) {
+			length.classList.remove("invalid");
+			length.classList.add("valid");
+	  } else {
+			length.classList.remove("valid");
+			length.classList.add("invalid");
+	  }
+	}
+	
+</script>
+
+<script>
+
+function passwordShowHide() {
+  var x = document.getElementById("inPassword");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+
+function passwordShow() {
+  var x = document.getElementById("inPassword");
+  if (x.type === "password") {
+    x.type = "text";
+  } 
+}
+
+function check() {
+  document.getElementById("showPassword").checked = true;
+}
+function uncheck() {
+  document.getElementById("showPassword").checked = false;
+}
+
 </script>
