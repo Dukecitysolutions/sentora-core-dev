@@ -527,13 +527,11 @@ class module_controller extends ctrl_module
         }
     }
 
-    static function IsValidPassword($password)
+	static function IsValidPassword($password)
     {
-        if (!ctype_alnum($password)) {
-            return false;
-        }
-        return true;
+        return preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/', $password) || preg_match('/-$/', $password) == 1;
     }
+	
 
     /**
      * End 'worker' methods.
