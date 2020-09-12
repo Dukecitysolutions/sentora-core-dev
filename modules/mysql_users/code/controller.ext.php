@@ -32,6 +32,7 @@ class module_controller extends ctrl_module
     static $alreadyexists;
     static $dbalreadyadded;
     static $blank;
+	static $blankpassword;
     static $badname;
     static $badpass;
     static $rootabuse;
@@ -507,6 +508,11 @@ class module_controller extends ctrl_module
 
     static function CheckPasswordForErrors($password)
     {
+		// Check to make sure the password is not blank before we go any further...
+        if ($password == '') {
+            self::$blankpassword = TRUE;
+            return false;
+        }
         if (!self::IsValidPassword($password)) {
             self::$badpass = true;
             return false;
@@ -756,6 +762,9 @@ class module_controller extends ctrl_module
         }
         if (!fs_director::CheckForEmptyValue(self::$badpass)) {
             return ui_sysmessage::shout(ui_language::translate("Your MySQL password is not valid. Valid characters are A-Z, a-z, 0-9."), "zannounceerror");
+        }
+		if (!fs_director::CheckForEmptyValue(self::$blankpassword)) {
+            return ui_sysmessage::shout(ui_language::translate("You entered blank a password. Please retry and enter a valid password."), "zannounceerror");
         }
         if (!fs_director::CheckForEmptyValue(self::$badIP)) {
             return ui_sysmessage::shout(ui_language::translate("The IP address is not valid. Please enter a valid IP address."), "zannounceerror");
