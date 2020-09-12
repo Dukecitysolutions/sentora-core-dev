@@ -257,7 +257,7 @@ class module_controller extends ctrl_module
         }
 		// Check for invalid password
         if (!self::IsValidPassword($password)) {
-            self::$badpassword = true;
+            self::$badpass = true;
             $retval = TRUE;
         }
         // Check to make sure the cron is not a duplicate...
