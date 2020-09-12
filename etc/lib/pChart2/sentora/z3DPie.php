@@ -202,7 +202,8 @@ if (isset($_GET['LegendMode'])) {
 }
 
 /* Create the pChart object */
-$myPicture = new pDraw(240,180,TRUE);
+//$myPicture = new pDraw(240,180,TRUE);
+$myPicture = new pDraw($ImageSize[0], $ImageSize[1],TRUE);
 
 /* Populate the pData object */
 $myPicture->myData->addPoints($Score,"ScoreA");
@@ -214,31 +215,34 @@ $myPicture->myData->setAbscissa("Labels");
 //$myPicture->myData->loadPalette("palettes/sentora.color", TRUE);
 
 /* Define the slice colors */
-$myPicture->myData->savePalette([
+$myPicture->myData->savePalette(array(
     0 => new pColor(25,78,132,100),
     1 => new pColor(103, 103, 103),
     2 => new pColor(31,36,42,100),
 	3 => new pColor(55,65,74,100),
 	4 => new pColor(96,187,34,100),
 	5 => new pColor(242,186,187,100),	
-]);
+));
 
 /* Set the default font properties */ 
-$myPicture->setFontProperties(["FontName"=>"pChart/fonts/Cairo-Regular.ttf","FontSize"=>10,"Color"=>new pColor(80)]);
+$myPicture->setFontProperties(array("FontName" => "pChart/fonts/" . $Font . ".ttf", "FontSize" => $FontSize, "R" => $FontR, "G" => $FontG, "B" => $FontB));
 
 /* Create the pPie object */ 
-$PieChart = new pPie($myPicture);
+$PieChart = new pPie($myPicture, $MyData);
 
 /* Enable shadow computing */ 
-$myPicture->setShadow(TRUE,["X"=>3,"Y"=>3,"Color"=>ColorBlack($Alpha=10)]);
+$myPicture->setShadow(TRUE, array("X" => 3, "Y" => 3, "R" => 0, "G" => 0, "B" => 0, "Alpha" => 10));
 
 /* Draw a split pie chart */ 
-$PieChart->draw3DPie(120,90,["Radius"=>100,"DataGapAngle"=>12,"DataGapRadius"=>10,"Border"=>TRUE]);
+//$PieChart->draw3DPie(120,90,["Radius"=>100,"DataGapAngle"=>12,"DataGapRadius"=>10,"Border"=>TRUE]);
+$PieChart->draw3DPie($ChartSize[0], $ChartSize[1], array("Radius" => $Radius, "DataGapAngle" => $DataGapAngle, "DataGapRadius" => $DataGapRadius, "Border" => TRUE));
 
-/* Write the legend box */ 
-//$myPicture->setFontProperties(["FontName"=>"pChart/fonts/PressStart2P-Regular.ttf","FontSize"=>6,"Color"=>ColorBlack()]);
-$PieChart->drawPieLegend(0,150,["Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_VERTICAL]);
-//$PieChart->drawPieLegend($LegendSize[0], $LegendSize[1], array("Style" => LEGEND_NOBORDER, "Mode" => LEGEND_VERTICAL));
+/* Write the legend box */
+if ($ShowLabels <> 0) {
+    $myPicture->setFontProperties(array("FontName" => "pChart/fonts/" . $LegendFont . ".ttf", "FontSize" => $LegendFontSize, "R" => $LegendFontR, "G" => $LegendFontG, "B" => $LegendFontB));
+    //$PieChart->drawPieLegend(140,160,array("Style"=>$LegendStyle,"Mode"=>$LegendMode));
+    $PieChart->drawPieLegend($LegendSize[0], $LegendSize[1], array("Style" => LEGEND_NOBORDER, "Mode" => LEGEND_VERTICAL));
+}
 
 /* Render the picture (choose the best way) */
 $myPicture->autoOutput("temp/example.draw3DPie.transparent.png");
