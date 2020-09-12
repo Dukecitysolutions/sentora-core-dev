@@ -31,6 +31,7 @@ class module_controller extends ctrl_module
 
     static $ok;
     static $password;
+	static $badpass;
     static $alreadyexists;
     static $validemail;
     static $noaddress;
@@ -192,25 +193,32 @@ class module_controller extends ctrl_module
     {
         global $zdbh;
         global $controller;
-        runtime_hook::Execute('OnBeforeUpdateMailbox');
-        $numrows = $zdbh->prepare("SELECT * FROM x_mailboxes WHERE mb_id_pk=:mid");
-        $numrows->bindParam(':mid', $mid);
-        $numrows->execute();
-        $rowmailbox = $numrows->fetch();
-        if ($enabled <> 0) {
-            self::ExecuteEnableMailbox($mid);
-        } else {
-            self::ExecuteDisableMailbox($mid);
-        }
-        self::$update = true;
-        // Include mail server specific file here.
-        $MailServerFile = 'modules/' . $controller->GetControllerRequest('URL', 'module') . '/code/' . ctrl_options::GetSystemOption('mailserver_php');
-        if (file_exists($MailServerFile)) {
-            include($MailServerFile);
-        }
-        runtime_hook::Execute('OnAfterUpdateMailbox');
-        self::$ok = true;
-        return;
+		
+		if (fs_director::CheckForEmptyValue(self::CheckPasswordForErrors($password))) {
+            
+			runtime_hook::Execute('OnBeforeUpdateMailbox');
+			$numrows = $zdbh->prepare("SELECT * FROM x_mailboxes WHERE mb_id_pk=:mid");
+			$numrows->bindParam(':mid', $mid);
+			$numrows->execute();
+			$rowmailbox = $numrows->fetch();
+			if ($enabled <> 0) {
+				self::ExecuteEnableMailbox($mid);
+			} else {
+				self::ExecuteDisableMailbox($mid);
+			}
+			self::$update = true;
+			// Include mail server specific file here.
+			$MailServerFile = 'modules/' . $controller->GetControllerRequest('URL', 'module') . '/code/' . ctrl_options::GetSystemOption('mailserver_php');
+			if (file_exists($MailServerFile)) {
+				include($MailServerFile);
+			}
+			runtime_hook::Execute('OnAfterUpdateMailbox');
+			self::$ok = true;
+			return;
+		
+		}
+		return false;
+		
     }
 
     static function ExecuteEnableMailbox($mid)
@@ -247,6 +255,11 @@ class module_controller extends ctrl_module
         }
         if (fs_director::CheckForEmptyValue($password)) {
             self::$password = true;
+            return false;
+        }
+		// Check for invalid password
+        if (!self::IsValidPassword($password)) {
+            self::$badpass = true;
             return false;
         }
         if (!self::IsValidEmail($fulladdress)) {
@@ -288,11 +301,34 @@ class module_controller extends ctrl_module
         return true;
     }
 
+	# These to help with weak passwords
     static function IsValidEmail($email)
     {
         return preg_match('/^[a-z0-9]+([_\\.-][a-z0-9]+)*@([a-z0-9]+([\.-][a-z0-9]+)*)+\\.[a-z]{2,}$/i', $email) == 1;
     }
-
+	static function IsValidPassword($password)
+    {
+        return preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/', $password) || preg_match('/-$/', $password) == 1;
+    }
+	
+	static function CheckPasswordForErrors($password)
+    {
+        global $zdbh;
+        $retval = FALSE;
+		
+		// Check to make sure the password is not blank before we go any further...
+        if ($password == '') {
+            self::$password = TRUE;
+            $retval = TRUE;
+        }
+        // Check for invalid password
+        if (!self::IsValidPassword($password)) {
+            self::$badpass = true;
+            $retval = TRUE;
+        }
+		return $retval;
+    }
+	
     /**
      * End 'worker' methods.
      */
@@ -492,6 +528,9 @@ class module_controller extends ctrl_module
         }
         if (!fs_director::CheckForEmptyValue(self::$password)) {
             return ui_sysmessage::shout(ui_language::translate("Your password cannot be blank."), "zannounceerror");
+        }
+		if (!fs_director::CheckForEmptyValue(self::$badpass)) {
+            return ui_sysmessage::shout(ui_language::translate("Your MySQL password is not valid. Valid characters are A-Z, a-z, 0-9."), "zannounceerror");
         }
         if (!fs_director::CheckForEmptyValue(self::$noaddress)) {
             return ui_sysmessage::shout(ui_language::translate("Your email address cannot be blank."), "zannounceerror");
