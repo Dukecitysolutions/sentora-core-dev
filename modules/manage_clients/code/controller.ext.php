@@ -33,6 +33,7 @@ class module_controller extends ctrl_module
     static $error;
     static $alreadyexists;
     static $badname;
+	static $badpass;
     static $bademail;
     static $badpassword;
     static $userblank;
@@ -394,7 +395,11 @@ class module_controller extends ctrl_module
                 self::$badpassword = true;
                 return false;
             }
-
+			// Check for invalid password
+        	if (!self::IsValidPassword($password)) {
+            	self::$badpass = true;
+            	return false;
+        	}
             $crypto = new runtime_hash;
             $crypto->SetPassword($newpass);
             $randomsalt = $crypto->RandomSalt();
@@ -587,11 +592,11 @@ class module_controller extends ctrl_module
         return true;
     }
 
-    static function CheckCreateForErrors($username, $packageid, $groupid, $email, $password = "")
+    static function CheckCreateForErrors($username, $packageid, $groupid, $email, $password)
     {
         global $zdbh;
         $username = strtolower(str_replace(' ', '', $username));
-        // Check to make sure the username is not blank or exists before we go any further...
+		// Check to make sure the username is not blank or exists before we go any further...
         if (!fs_director::CheckForEmptyValue($username)) {
             $sql = "SELECT COUNT(*) FROM x_accounts WHERE UPPER(ac_user_vc)=:user AND ac_deleted_ts IS NULL";
             $numrows = $zdbh->prepare($sql);
@@ -603,10 +608,26 @@ class module_controller extends ctrl_module
                     return false;
                 }
             }
-            if (!self::IsValidUserName($username)) {
-                self::$badname = true;
-                return false;
-            }
+		// Check to make sure the password is not blank before we go any further...
+        if ($password == '') {
+            self::$passwordblank = TRUE;
+            return false;
+        }	
+		// Check for password length...
+		if (strlen($password) < ctrl_options::GetSystemOption('password_minlength')) {
+			self::$badpassword = true;
+			return false;
+		}
+		// Check for invalid password
+        if (!self::IsValidPassword($password)) {
+            self::$badpass = true;
+            return false;
+        }
+		if (!self::IsValidUserName($username)) {
+			self::$badname = true;
+			return false;
+		}
+
         } else {
             self::$userblank = true;
             return false;
@@ -666,7 +687,8 @@ class module_controller extends ctrl_module
             self::$not_unique_email = true;
             return false;
         }
-
+		
+		/*
         // Check for password length...
         if (!fs_director::CheckForEmptyValue($password)) {
             if (strlen($password) < ctrl_options::GetSystemOption('password_minlength')) {
@@ -677,10 +699,15 @@ class module_controller extends ctrl_module
             self::$passwordblank = true;
             return false;
         }
-
+		*/
         return true;
     }
 
+	static function IsValidPassword($password)
+    {
+        return preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/', $password) || preg_match('/-$/', $password) == 1;
+    }
+	
 	static function IsValidEmail($email)
 	{
 		if (!filter_var($email, FILTER_SANITIZE_EMAIL))
@@ -1122,7 +1149,7 @@ class module_controller extends ctrl_module
 
     static function getRandomPassword()
     {
-        $minpasswordlength = ctrl_options::GetSystemOption('password_minlength');
+		$minpasswordlength = "16";
         $trylength = 9;
         if ($trylength < $minpasswordlength) {
             $uselength = $minpasswordlength;
@@ -1164,6 +1191,9 @@ class module_controller extends ctrl_module
         }
         if (!fs_director::CheckForEmptyValue(self::$badname)) {
             return ui_sysmessage::shout(ui_language::translate("Your client name is not valid. Please enter a valid client name."), "zannounceerror");
+        }
+		if (!fs_director::CheckForEmptyValue(self::$badpass)) {
+            return ui_sysmessage::shout(ui_language::translate("Your MySQL password is not valid. Valid characters are A-Z, a-z, 0-9."), "zannounceerror");
         }
         if (!fs_director::CheckForEmptyValue(self::$bademail)) {
             return ui_sysmessage::shout(ui_language::translate("Your email adress is not valid. Please enter a valid email address."), "zannounceerror");
