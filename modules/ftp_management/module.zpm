@@ -108,16 +108,11 @@ input[type=submit] {
                 </tr>
                 <tr>
                     <th><: New password :>:</th>
-                    <td><input class="inPassword" name="inPassword" type="password" id="inPassword" size="30" maxlength="50" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required /></td>
+                    <td><input class="inPassword" name="inPassword" type="password" id="inPassword" size="30" maxlength="50" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required /><a href="#" class="link-password" id="generate" onclick="passwordShow(), check()" ><: Generate Password :></a></td>
 					<td><input id="showPassword" type="checkbox" onclick="passwordShowHide()" >Show Password</td>
                     <td><button class="button-nonloader btn btn-default" type="submit" name="inReset" id="button_nonloader" value="<@ EditCurrentID @>"><: Reset Password :>
                         </button>
                         <button class="button-loader btn btn-default" type="button" onclick="window.location.href='./?module=ftp_management';return false;"><: Cancel :></button></td>
-                </tr>
-                <tr>
-                    <th></th>
-                    <td><a href="#" class="link-password" id="generate" onclick="passwordShow(), check()" ><: Generate Password :></a></td>
-                    <td></td>
                 </tr>
             </table>
 										
@@ -189,16 +184,9 @@ input[type=submit] {
                             </tr>
                             <tr>
                                 <th><: Password :>:</th>
-                                <td><input class="inPassword" name="inPassword" type="password" id="inPassword" size="30" maxlength="50" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required/></td>
+                                <td><input class="inPassword" name="inPassword" type="password" id="inPassword" size="30" maxlength="50" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required/><a href="#" class="link-password" id="generate" onclick="passwordShow(), check()" ><: Generate Password :></a></td>
 								<td><input id="showPassword" type="checkbox" onclick="passwordShowHide()" >Show Password</td>
-                            </tr>
-							
-							<tr>
-								<th></th>
-								<td><a href="#" class="link-password" id="generate" onclick="passwordShow(), check()" ><: Generate Password :></a></td>
-								<td></td>
-							</tr>							
-
+                            </tr>					
 						</table>
 						
 						<div class="check_container">

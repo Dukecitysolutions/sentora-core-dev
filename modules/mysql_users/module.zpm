@@ -154,7 +154,7 @@ input[type=submit] {
                 <tr>
                     <th nowrap="nowrap"><: Password :>:</th>
                     <td width="250px">
-                        <input class="inPassword" type="text" name="inResetPW" id="inPassword" value="" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required />
+                        <input class="inPassword" type="text" name="inResetPW" id="inPassword" value="" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required /><a href="#" class="link-password" id="generate" onclick="passwordShow(), check()" ><: Generate Password :></a>
                     </td>
 					<td><input id="showPassword" type="checkbox" onclick="passwordShowHide()" >Show Password</td>
 					<td style="width:20px"></td>
@@ -163,11 +163,6 @@ input[type=submit] {
                         <button class="button-nonloader btn btn-primary" type="submit" ><: Save Password :></button>
                         <button class="button-loader btn btn-default" type="button" onclick="window.location.href='./?module=mysql_users';return false;"><: Cancel :></button>
                     </td>
-                </tr>
-                <tr>
-                    <th></th>
-                    <td><a href="#" class="link-password" id="generate" onclick="passwordShow(), check()" ><: Generate Password :></a></td>
-                    <td></td>
                 </tr>
             </table>
 			
