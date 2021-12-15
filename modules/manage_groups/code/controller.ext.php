@@ -319,7 +319,6 @@ class module_controller extends ctrl_module
         $sql = " SELECT * FROM x_groups WHERE ug_reseller_fk=:userid";
         $numrows = $zdbh->prepare($sql);
         $numrows->bindParam(':userid', $currentuser['userid']);
-        $numrows->bindParam(':editedUsrID', $urlvars['other']);
         $numrows->execute();
 
         if( $numrows->rowCount() == 0 ) {
