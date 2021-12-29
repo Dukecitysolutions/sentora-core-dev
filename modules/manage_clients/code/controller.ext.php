@@ -35,7 +35,7 @@ class module_controller extends ctrl_module
     static $badname;
 	static $badpass;
     static $bademail;
-    static $badpassword;
+    static $badpasswordlength;
     static $userblank;
     static $emailblank;
     static $passwordblank;
@@ -615,7 +615,7 @@ class module_controller extends ctrl_module
         }	
 		// Check for password length...
 		if (strlen($password) < ctrl_options::GetSystemOption('password_minlength')) {
-			self::$badpassword = true;
+			self::$badpasswordlength = true;
 			return false;
 		}
 		// Check for invalid password
@@ -705,7 +705,8 @@ class module_controller extends ctrl_module
 
 	static function IsValidPassword($password)
     {
-        return preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/', $password) || preg_match('/-$/', $password) == 1;
+        //return preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/', $password) || preg_match('/-$/', $password) == 1;
+		return preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/', $password) || preg_match('/-$/', $password) == 1;
     }
 	
 	static function IsValidEmail($email)
@@ -1146,7 +1147,7 @@ class module_controller extends ctrl_module
         }
         return;
     }
-
+/*
     static function getRandomPassword()
     {
 		$minpasswordlength = "16";
@@ -1159,7 +1160,7 @@ class module_controller extends ctrl_module
         $password = fs_director::GenerateRandomPassword($uselength, 4);
         return $password;
     }
-
+*/
     static function getMinPassLength()
     {
         $minpasswordlength = ctrl_options::GetSystemOption('password_minlength');
@@ -1193,12 +1194,12 @@ class module_controller extends ctrl_module
             return ui_sysmessage::shout(ui_language::translate("Your client name is not valid. Please enter a valid client name."), "zannounceerror");
         }
 		if (!fs_director::CheckForEmptyValue(self::$badpass)) {
-            return ui_sysmessage::shout(ui_language::translate("Your MySQL password is not valid. Valid characters are A-Z, a-z, 0-9."), "zannounceerror");
+            return ui_sysmessage::shout(ui_language::translate("Your password is not valid. Valid characters are A-Z, a-z, 0-9."), "zannounceerror");
         }
         if (!fs_director::CheckForEmptyValue(self::$bademail)) {
-            return ui_sysmessage::shout(ui_language::translate("Your email adress is not valid. Please enter a valid email address."), "zannounceerror");
+            return ui_sysmessage::shout(ui_language::translate("Your email address is not valid. Please enter a valid email address."), "zannounceerror");
         }
-        if (!fs_director::CheckForEmptyValue(self::$badpassword)) {
+        if (!fs_director::CheckForEmptyValue(self::$badpasswordlength)) {
             return ui_sysmessage::shout(ui_language::translate("Your password did not meet the minimun length requirements. Characters needed for password length") . ": " . ctrl_options::GetSystemOption('password_minlength'), "zannounceerror");
         }
         if (!fs_director::CheckForEmptyValue(self::$alreadyexists)) {

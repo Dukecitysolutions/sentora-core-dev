@@ -35,6 +35,7 @@ class module_controller extends ctrl_module
 	static $blankpassword;
     static $badname;
     static $badpass;
+	static $badpasswordlength;
     static $rootabuse;
     static $badIP;
     static $ok;
@@ -206,17 +207,7 @@ class module_controller extends ctrl_module
         $sql->bindParam(':access', $access);
         $sql->execute();
         // Set MySQL password for new user...
-        //$sql = $zdbh->prepare("SET PASSWORD FOR :username@:access=PASSWORD(:password)");
-		
-		# Added this code for MySQL version compatibility
-		$ShortSQLVersion = substr(sys_versions::ShowMySQLVersion(), 0, 5);
-		if ( $ShortSQLVersion >= "5.7.6" ) {
-			//$sql = $zdbh->prepare("ALTER USER :username IDENTIFIED BY ':password'");
-			$sql = $zdbh->prepare("SET PASSWORD FOR :username@:access = :password;");
-		} else {
-			$sql = $zdbh->prepare("SET PASSWORD FOR :username@:access=PASSWORD(:password)");
-		}
-		
+        $sql = $zdbh->prepare("SET PASSWORD FOR :username@:access=PASSWORD(:password)");
         $sql->bindParam(':username', $username);
         $sql->bindParam(':access', $access);
         $sql->bindParam(':password', $password);
@@ -498,17 +489,7 @@ class module_controller extends ctrl_module
         if ($numrows->execute()) {
             if ($numrows->fetchColumn() <> 0) {
                 // Set MySQL password for new user...
-                //$sql = $zdbh->prepare("SET PASSWORD FOR :mu_name_vc@:mu_access_vc=PASSWORD(:password)");
-
-				# Added this code for MySQL version compatibility
-				$ShortSQLVersion = substr(sys_versions::ShowMySQLVersion(), 0, 5);
-				if ( $ShortSQLVersion >= "5.7.6" ) {
-					//$sql = $zdbh->prepare("ALTER USER :username IDENTIFIED BY ':password'");
-					$sql = $zdbh->prepare("SET PASSWORD FOR :mu_name_vc@:mu_access_vc = :password;");
-				} else {
-					$sql = $zdbh->prepare("SET PASSWORD FOR :mu_name_vc@:mu_access_vc=PASSWORD(:password)");
-				}
-
+                $sql = $zdbh->prepare("SET PASSWORD FOR :mu_name_vc@:mu_access_vc=PASSWORD(:password)");
                 $sql->bindParam(':mu_name_vc', $rowuser['mu_name_vc']);
                 $sql->bindParam(':mu_access_vc', $rowuser['mu_access_vc']);
                 $sql->bindParam(':password', $password);
@@ -533,6 +514,11 @@ class module_controller extends ctrl_module
             self::$blankpassword = TRUE;
             return false;
         }
+		// Check for password length...
+		if (strlen($password) < ctrl_options::GetSystemOption('password_minlength')) {
+			self::$badpasswordlength = true;
+			return false;
+		}
         if (!self::IsValidPassword($password)) {
             self::$badpass = true;
             return false;
@@ -556,6 +542,7 @@ class module_controller extends ctrl_module
 	static function IsValidPassword($password)
     {
         return preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/', $password) || preg_match('/-$/', $password) == 1;
+		//return preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/', $password) || preg_match('/-$/', $password) == 1;
     }
 	
 
@@ -765,7 +752,19 @@ class module_controller extends ctrl_module
     {
         return '<img src="' . ui_tpl_assetfolderpath::Template() . 'img/misc/unlimited.png" alt="' . ui_language::translate('Unlimited') . '"/>';
     }
-	
+
+    static function getMinPassLength()
+    {
+        $minpasswordlength = ctrl_options::GetSystemOption('password_minlength');
+        $trylength = 9;
+        if ($trylength < $minpasswordlength) {
+            $uselength = $minpasswordlength;
+        } else {
+            $uselength = $trylength;
+        }
+        return $uselength;
+    }
+
     static function getResult()
     {
         if (!fs_director::CheckForEmptyValue(self::$blank)) {
@@ -782,6 +781,9 @@ class module_controller extends ctrl_module
         }
         if (!fs_director::CheckForEmptyValue(self::$badpass)) {
             return ui_sysmessage::shout(ui_language::translate("Your MySQL password is not valid. Valid characters are A-Z, a-z, 0-9."), "zannounceerror");
+        }
+		if (!fs_director::CheckForEmptyValue(self::$badpasswordlength)) {
+            return ui_sysmessage::shout(ui_language::translate("Your password did not meet the minimun length requirements. Characters needed for password length") . ": " . ctrl_options::GetSystemOption('password_minlength'), "zannounceerror");
         }
 		if (!fs_director::CheckForEmptyValue(self::$blankpassword)) {
             return ui_sysmessage::shout(ui_language::translate("You entered blank a password. Please retry and enter a valid password."), "zannounceerror");

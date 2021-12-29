@@ -35,6 +35,7 @@ class module_controller extends ctrl_module
 	static $blankpassword;	
     static $badname;
 	static $badpass;
+	static $badpasswordlength;
     static $invalidPath;
     static $ok;
     static $delete;
@@ -289,6 +290,11 @@ class module_controller extends ctrl_module
             self::$blankpassword = TRUE;
             $retval = TRUE;
         }
+		// Check for password length...
+		if (strlen($password) < ctrl_options::GetSystemOption('password_minlength')) {
+			self::$badpasswordlength = true;
+			return false;
+		}
         // Check for invalid password
         if (!self::IsValidPassword($password)) {
             self::$badpass = true;
@@ -299,7 +305,8 @@ class module_controller extends ctrl_module
 	
 	static function IsValidPassword($password)
     {
-        return preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/', $password) || preg_match('/-$/', $password) == 1;
+        //return preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/', $password) || preg_match('/-$/', $password) == 1;
+		return preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/', $password) || preg_match('/-$/', $password) == 1;
     }
 	
     static function ExecuteDeleteFTP($ft_id_pk, $uid = null)
@@ -531,6 +538,18 @@ class module_controller extends ctrl_module
         }
     }
 
+    static function getMinPassLength()
+    {
+        $minpasswordlength = ctrl_options::GetSystemOption('password_minlength');
+        $trylength = 9;
+        if ($trylength < $minpasswordlength) {
+            $uselength = $minpasswordlength;
+        } else {
+            $uselength = $trylength;
+        }
+        return $uselength;
+    }
+
     static function getResult()
     {
         if (!fs_director::CheckForEmptyValue(self::$blank)) {
@@ -550,6 +569,9 @@ class module_controller extends ctrl_module
         }
 		if (!fs_director::CheckForEmptyValue(self::$badpass)) {
             return ui_sysmessage::shout(ui_language::translate("Your MySQL password is not valid. Valid characters are A-Z, a-z, 0-9."), "zannounceerror");
+        }
+		if (!fs_director::CheckForEmptyValue(self::$badpasswordlength)) {
+            return ui_sysmessage::shout(ui_language::translate("Your password did not meet the minimun length requirements. Characters needed for password length") . ": " . ctrl_options::GetSystemOption('password_minlength'), "zannounceerror");
         }
         if (!fs_director::CheckForEmptyValue(self::$invalidPath)) {
             return ui_sysmessage::shout(ui_language::translate("Invalid Folder."), "zannounceok");
