@@ -383,7 +383,7 @@ input[type=submit] {
 			
 			
 		var chars = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
-		var string_length = 12;
+		var string_length = <@ MinPassLength @>;
 		var randomstring = '';
 		var charCount = 0;
 		var numCount = 0;
@@ -414,7 +414,7 @@ input[type=submit] {
         $('.link-password').click(function(e){
             linkId = $(this).attr('id');
             if (linkId == 'generate'){
-                password = $.password(12,false);
+                password = $.password(<@ MinPassLength @>,false);
                 $('.inPassword').val(password);
             }
             e.preventDefault();
@@ -475,7 +475,7 @@ input[type=submit] {
 	  }
 	
 	  // Validate length
-	  if(myInput.value.length >= (12)) {
+	  if(myInput.value.length >= <@ MinPassLength @>) {
 			length.classList.remove("invalid");
 			length.classList.add("valid");
 	  } else {
