@@ -112,32 +112,10 @@ function WriteVhostConfigFile()
 	if ( !is_dir( $server_panel  ) ) {
               fs_director::CreateDirectory( $server_panel  );
        }
-	
-	// Error fucntion for Smarty template
-	$errorpages = ctrl_options::GetSystemOption('sentora_root') . "/etc/static/errorpages";
-	
-	function is_errorpages() {
-		$errorpages = ctrl_options::GetSystemOption('sentora_root') . "/etc/static/errorpages";
-		if (is_dir($errorpages)) {
-			if ($handle = opendir($errorpages)) {
-				while (($file = readdir($handle)) !== false) {
-					if ($file != "." && $file != "..") {
-						$page = explode(".", $file);
-						if (!fs_director::CheckForEmptyValue(CheckErrorDocument($page[0]))) {
-							$loaderrorpages[] = "ErrorDocument " . $page[0] . " /etc/static/errorpages/" . $page[0] . ".html";
-						}
-					}
-				}
-				closedir($handle);
-				
-				return $loaderrorpages;
-			}
-		}
-	}
-	
-  	$is_errorpages = is_errorpages();
-	
-		 //***************************
+	 
+
+	//
+	//***************************
 	// Server values
 	$server_port = ctrl_options::GetSystemOption('sentora_port');
 	$server_root = ctrl_options::GetSystemOption('sentora_root');
@@ -145,6 +123,8 @@ function WriteVhostConfigFile()
 	$server_log_dir = ctrl_options::GetSystemOption('log_dir');	
 	$panel_ssl_txt = ctrl_options::GetSystemOption('panel_ssl_tx');
 	$global_zpcustom = ctrl_options::GetSystemOption('global_zpcustom');
+	// Call for Control panel error pages
+  	$is_panelerrorpages = is_errorpages('cp', 'null', 'null');
 	
   	// Smarty values
  	$cpsearch = array('server_ip' => '*',
@@ -159,7 +139,7 @@ function WriteVhostConfigFile()
 	$smarty->assign('cp', $cpsearch);
 	$smarty->assign('panel_ssl_txt', $panel_ssl_txt);
 	$smarty->assign('global_zpcustom', $global_zpcustom);
-	$smarty->assign('loaderrorpages', $is_errorpages);
+	$smarty->assign('loaderrorpages', $is_panelerrorpages);
 	
 	//****************************
 					
@@ -215,8 +195,10 @@ function WriteVhostConfigFile()
      * #
      * ##############################################################################################################
      */
-
+	
+	//
     // Sentora virtual host container configuration
+	//
     $sql = $zdbh->prepare("SELECT * FROM x_vhosts WHERE vh_deleted_ts IS NULL");
     $sql->execute();
     while ($rowvhost = $sql->fetch()) {
@@ -256,7 +238,7 @@ function WriteVhostConfigFile()
 			  
 		$vhRootDir =  ctrl_options::GetSystemOption('hosted_dir') . $vhostuser['username'] . '/public_html' . $rowvhost['vh_directory_vc'];  
 	  
-		// Vhost code values
+		// User Vhost Smarty code values
 		$vh_server_ip = $vhostIp;
 		$vh_server_port = $vhostPort;
 		$vh_server_name = $rowvhost['vh_name_vc'];
@@ -280,13 +262,25 @@ function WriteVhostConfigFile()
 		$vh_snuff_path = "/etc/sentora/configs/php/sp/";
 		$vh_vhostuser = $vhostuser['username'];
 		
-		# PHP Disable_functions protection system ( suhison or Snuffleupagus )
+		//
+		// Future code :-)
+		//
+		
+		# PHP Disable_functions protection system ( suhison or Snuffleupagus ) - DISABLED TELL DEVELOPMENT CONTINUES!!!
 		//if (extension_loaded('suhosin') == true ) {	
 			// Suhosin
 			//$func_blklist_sys = ($rowvhost['vh_suhosin_in'] <> 0) ? ctrl_options::GetSystemOption('suhosin_value') : '';
 			
 		//} elseif (extension_loaded('snuffleupagus') == true ) {
 		//} else {			
+			
+		//....
+		//
+		//.....
+			
+			//
+			// Contnue support for Snuff only!!! For now!
+			//
 			
 			//if ( is_dir( $vh_snuff_path . $vh_vhostuser ) ) {
 			if($rowvhost['vh_custom_sp_tx'] != NULL) {
@@ -331,16 +325,27 @@ function WriteVhostConfigFile()
 					
 				}
 			}
+			
+		//////////////////////////////////
+			
 		//}
 		/*
-		// Set vhost path and checks if there is folder
+		// Set vhost path and checks if there is folder - BETA - DO NOT USE!!!! THIS IS TEST CODE!!!!
 		$vh_path = "/etc/sentora/configs/apache/vhosts/";
 		if ( !is_dir( $vh_path  ) ) {
               fs_director::CreateDirectory( $vh_path  );
        	}
-		*/	
+		*/
 		
- 		// Vhost Smarty values
+		//////////////////////////////////	
+		
+		
+		//	
+		// Call for User vh error pages!
+		//
+		$is_errorpagesvh = is_errorpages('vh', $vhostuser['username'], $rowvhost['vh_directory_vc'] );
+		
+ 		// User Vhost Smarty values
  		$vhsearch = array('server_ip' => $vh_server_ip,
 						'server_port' => $vh_server_port,
 						'server_name' => $vh_server_name,
@@ -371,6 +376,7 @@ function WriteVhostConfigFile()
 						);
 				
 		$smarty->assign('vh', $vhsearch);
+		$smarty->assign('vhloaderrorpages', $is_errorpagesvh);
  		
 		//****************************
 	
@@ -586,8 +592,9 @@ function WriteVhostConfigFile()
      * # Write vhost file to disk
      * #
      * ##############################################################################################################
-     */
-/*
+    
+	 */
+	/*
     // write the vhost config file
     $vhconfigfile = ctrl_options::GetSystemOption('apache_vhost');
     if (fs_filehandler::UpdateFile($vhconfigfile, 0777, $line)) {
@@ -771,7 +778,45 @@ function BackupVhostConfigFile()
     }
     echo "Apache backups complete..." . fs_filehandler::NewLine();
 }
-
+	   
+	   
+	//
+	// Error fucntion for all sites - Smarty template
+	//
+	function is_errorpages($type, $vhUser, $vhDir) {
+		global $zdbh;
+		
+		// Set error pages location
+		if ($type == 'cp') {
+			// Return CP error pages				
+			$errorpages = ctrl_options::GetSystemOption('sentora_root') . "/etc/static/errorpages";
+		} elseif ($type == 'vh') {
+			// Return VH error pages
+			$errorpages = ctrl_options::GetSystemOption('hosted_dir') . $vhUser . '/public_html' . $vhDir . '/_errorpages';
+		}
+		
+		if (is_dir($errorpages)) {
+			if ($handle = opendir($errorpages)) {
+				while (($file = readdir($handle)) !== false) {
+					if ($file != "." && $file != "..") {
+						$page = explode(".", $file);
+						if (!fs_director::CheckForEmptyValue(CheckErrorDocument($page[0]))) {
+							
+							if ($type == 'cp') {				
+								$loaderrorpages[] = "ErrorDocument " . $page[0] . " /etc/static/errorpages/" . $page[0] . ".html";
+							} elseif ($type == 'vh') {
+								$loaderrorpages[] = "ErrorDocument " . $page[0] . " /_errorpages/" . $page[0] . ".html";
+							}
+							
+						}
+					}
+				}
+				closedir($handle);
+				return $loaderrorpages;				
+			}
+		}
+	}
+	
 
 function TriggerApacheQuotaUsage()
 {
