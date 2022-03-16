@@ -207,7 +207,13 @@ class module_controller extends ctrl_module
         $sql->bindParam(':access', $access);
         $sql->execute();
         // Set MySQL password for new user...
-        $sql = $zdbh->prepare("SET PASSWORD FOR :username@:access=PASSWORD(:password)");
+		if (sys_versions::ShowMySQLVersion() <= "5.7.5") {
+			// MySQL 5.7 or OLDER
+			$sql = $zdbh->prepare("SET PASSWORD FOR :username@:access=PASSWORD(:password)");
+        } else {
+			// MySQL 5.7 + 
+			$sql = $zdbh->prepare("ALTER USER :username@:access IDENTIFIED BY :password");
+		}
         $sql->bindParam(':username', $username);
         $sql->bindParam(':access', $access);
         $sql->bindParam(':password', $password);
@@ -489,7 +495,13 @@ class module_controller extends ctrl_module
         if ($numrows->execute()) {
             if ($numrows->fetchColumn() <> 0) {
                 // Set MySQL password for new user...
-                $sql = $zdbh->prepare("SET PASSWORD FOR :mu_name_vc@:mu_access_vc=PASSWORD(:password)");
+				if (sys_versions::ShowMySQLVersion() <= "5.7.5") {
+					// MySQL 5.7 or OLDER
+					$sql = $zdbh->prepare("SET PASSWORD FOR :mu_name_vc@:mu_access_vc=PASSWORD(:password)");
+				} else {
+					// MySQL 5.7 + 
+					$sql = $zdbh->prepare("ALTER USER :mu_name_vc@:mu_access_vc IDENTIFIED BY :password");
+				}
                 $sql->bindParam(':mu_name_vc', $rowuser['mu_name_vc']);
                 $sql->bindParam(':mu_access_vc', $rowuser['mu_access_vc']);
                 $sql->bindParam(':password', $password);
