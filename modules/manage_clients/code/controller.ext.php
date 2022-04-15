@@ -396,7 +396,7 @@ class module_controller extends ctrl_module
                 return false;
             }
 			// Check for invalid password
-        	if (!self::IsValidPassword($password)) {
+        	if (!self::IsValidPassword($newpass)) {
             	self::$badpass = true;
             	return false;
         	}
