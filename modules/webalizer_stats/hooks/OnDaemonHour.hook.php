@@ -42,9 +42,9 @@ function GenerateWebalizerStats()
         /** all other args and flags are the same so keep them outsite to avoid duplication */
         $flag        = '-o';
         
-        $secondFlags = '-d -p -F clf -n';
+        $secondFlags = '-d -p -F clf';
 
-        $domain = $rowvhost[ 'vh_name_vc' ];
+        $domain = '-n ' . $rowvhost[ 'vh_name_vc' ];
 
         $logFile = realpath( ctrl_options::GetSystemOption( 'log_dir' ) .
             'domains/' .
@@ -64,8 +64,9 @@ function GenerateWebalizerStats()
             $logFile,
             $flag,
             $statsPath,
+			$domain,
             $secondFlags,
-            $domain,
+            
         );
 
         echo "Generating stats for: " . $rowvhost[ 'ac_user_vc' ] . "/" . $rowvhost[ 'vh_name_vc' ] . fs_filehandler::NewLine();
