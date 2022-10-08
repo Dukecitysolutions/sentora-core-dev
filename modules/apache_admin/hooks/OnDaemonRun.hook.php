@@ -282,10 +282,22 @@ function WriteVhostConfigFile()
 			// Contnue support for Snuff only!!! For now!
 			//
 			
-			//if ( is_dir( $vh_snuff_path . $vh_vhostuser ) ) {
-			if($rowvhost['vh_custom_sp_tx'] != NULL) {
-				// If custom Snuff rules. Create vhost rule file here.
-			
+			// Start Snuff Protection managemenet HERE. ------- DO NOT EDIT THIS CODE BELOW!!!!!
+			// If Snuff for vhost is DISABLED continue here
+			if($rowvhost['vh_suhosin_in'] == 0) {
+				
+				// Snuff Default rules
+				$func_blklist_sys = ($rowvhost['vh_suhosin_in'] <> 0) ? 'php_admin_value sp.configuration_file "' . $vh_snuff_path . 'disabled.rules"' : '';	
+				
+				// If not using custom rules. Delete any custom snuff rules if they exist. 
+				if ( file_exists( $vh_snuff_path . $vh_vhostuser . "/" . $rowvhost['vh_name_vc'] . '.rules' ) ) {
+					
+					// Clear/Delete vhost snuff custom rules file
+					//unlink ( $vh_snuff_path . $vh_vhostuser . "/" . $rowvhost['vh_name_vc'] . '.rules' );
+					file_put_contents($vh_snuff_path . $vh_vhostuser . "/" . $rowvhost['vh_name_vc'] . '.rules', "");
+				}
+			} else {
+				// If SNUFF protection is ENABLED continue here
 				$func_blklist_sys = ($rowvhost['vh_suhosin_in'] <> 0) ? 'php_admin_value sp.configuration_file "' . $vh_snuff_path . $vh_vhostuser . "/" . $rowvhost['vh_name_vc'] . '.rules"' : '';
 			
 				// Check sp user path exists if not make folder for sp vhost configs			
@@ -301,30 +313,21 @@ function WriteVhostConfigFile()
 				$linesp .= "# Use Sentora Menu -> Admin -> Module Admin -> Apache config" . fs_filehandler::NewLine();
 				$linesp .= "################################################################" . fs_filehandler::NewLine();
 				$linesp .= fs_filehandler::NewLine();
-					
-				//if($rowvhost['vh_custom_sp_tx'] != null) {
+				
+				// If custom Snuff rules. Create vhost rule file here.	
+				if($rowvhost['vh_custom_sp_tx'] != null) {
 					$linesp .= $rowvhost['vh_custom_sp_tx'] . fs_filehandler::NewLine();
 					$linesp .= fs_filehandler::NewLine();
-				//}
+				}
+				// Add SP default rules
 				$linesp .= $smarty->fetch("vhost_sp_rules.tpl") . fs_filehandler::NewLine();		
 			
 				//*********Write to file
 				WriteDataToFile($vh_snuff_path . $vh_vhostuser . "/" . $rowvhost['vh_name_vc'] . '.rules'  , $linesp);
 				//***********
-			
-			} else {
-				
-				// Snuff Default rules
-				$func_blklist_sys = ($rowvhost['vh_suhosin_in'] <> 0) ? 'php_admin_value sp.configuration_file "' . $vh_snuff_path . 'disabled.rules"' : '';	
-				
-				// If not using custom rules. Delete any custom snuff rules if they exist. 
-				if ( file_exists( $vh_snuff_path . $vh_vhostuser . "/" . $rowvhost['vh_name_vc'] . '.rules' ) ) {
-					
-					// Delete vhost snuff custom rules file
-					unlink ( $vh_snuff_path . $vh_vhostuser . "/" . $rowvhost['vh_name_vc'] . '.rules' );
-					
-				}
+
 			}
+			// END Snuff Protection managemenet HERE. ------- DO NOT EDIT THIS CODE BELOW!!!!!
 			
 		//////////////////////////////////
 			
