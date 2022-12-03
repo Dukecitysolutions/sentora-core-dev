@@ -280,8 +280,8 @@ class module_controller extends ctrl_module
 				$line .= "<tr><th>" . ui_language::translate("<u>SSL Settings Options - Below</u>");
 				$line .= "<tr><th>" . ui_language::translate("SSL Port") . "</th><td><input type=\"text\" name=\"vh_ssl_port_in\" id=\"vh_ssl_port_in\" maxlength=\"6\" value=\"" . $row['vh_ssl_port_in'] . "\"/>";
 				$line .= "<tr><th>" .  ui_language::translate("SSL Cert Settings") . ":</th><td><textarea cols=\"60\" rows=\"10\" name=\"vh_ssl_tx\">" . $row['vh_ssl_tx'] . "</textarea></td></tr>";
-				$line .= "<tr><th>" . ui_language::translate("<u>Snuffleupagus Custom settings - Below</u>");
-				$line .= "<tr><th>" .  ui_language::translate("Snuffleupagus Custom settings") . ":</th><td><textarea cols=\"60\" rows=\"10\" name=\"vh_custom_sp_tx\">" . $row['vh_custom_sp_tx'] . "</textarea></td></tr>";
+				//$line .= "<tr><th>" . ui_language::translate("<u>Snuffleupagus Custom settings - Below</u>");
+				//$line .= "<tr><th>" .  ui_language::translate("Snuffleupagus Custom settings") . ":</th><td><textarea cols=\"60\" rows=\"10\" name=\"vh_custom_sp_tx\">" . $row['vh_custom_sp_tx'] . "</textarea></td></tr>";
 				
             }
         }
