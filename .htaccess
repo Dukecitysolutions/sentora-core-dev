@@ -1,3 +1,7 @@
+# ENABLE SSL for panel
+#RewriteCond %{HTTPS} !=on
+#RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
 # Standard Sentora Rewrite Ruleset
 RewriteEngine on
 RewriteRule ^api/([^/\.]+)/?$ bin/api.php?m=$1 [L]
@@ -9,10 +13,14 @@ RewriteRule ^apps/([^/\.]+)/?$ etc/apps/$1 [L]
 
 # Deny access to some file types/directories
 RewriteRule ^/?(\.git|\.tx|SQL|config|logs|temp|tests|program\/(include|lib|localization|steps)) - [F]
-RewriteRule ^(etc/tmp|etc/zppy-cache|/etc/lib|etc/build) - [F,L,NC]
+RewriteRule ^(etc/tmp|etc/zppy-cache|/etc/lib/pChart2/cache|etc/build) - [F,L,NC]
 
 # Disable index listing
 Options -Indexes
+
+#block bad perl bots
+SetEnvIfNoCase User-Agent "^libwww-perl*" block_bad_bots
+Deny from env=block_bad_bots
 
 <ifModule mod_gzip.c>
 mod_gzip_on Yes
